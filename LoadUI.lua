@@ -2081,6 +2081,7 @@ OutputSample3.Transparency = 1
 OutputSample3.Text = "[System]: 1m1m1m1m1m1m1m1m1m1m1m"
 OutputSample3.TextColor3 = Color3.new(0.705882, 0.588235, 0.705882)
 OutputSample3.TextSize = 17
+OutputSample3.TextStrokeTransparency = 0.5
 OutputSample3.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 OutputSample3.TextXAlignment = Enum.TextXAlignment.Left
 OutputSample3.Parent = ConsoleOutside
