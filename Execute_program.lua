@@ -40,7 +40,7 @@ if not ENV_SUPPORTED then
 				pcall(function()
 					_G.TDSHubConsole({
 						Title = "System",
-						Text = "The current environment is not supported.",
+						Text = "This environment is not working",
 						Color = Color3.fromRGB(255, 170, 0)
 					})
 				end)
