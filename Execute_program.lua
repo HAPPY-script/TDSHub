@@ -28,7 +28,30 @@ local ManageProgramButton = Executor:WaitForChild("ManageProgramButton")
 local IsMinimized = false
 
 local Remote = Rep:WaitForChild("RemoteFunction")
-local Towers = workspace:WaitForChild("Towers")
+local Towers = workspace:FindFirstChild("Towers")
+
+local ENV_SUPPORTED = Towers ~= nil
+
+if not ENV_SUPPORTED then
+
+	task.spawn(function()
+		while true do
+			if type(_G.TDSHubConsole) == "function" then
+				pcall(function()
+					_G.TDSHubConsole({
+						Title = "System",
+						Text = "The current environment is not supported.",
+						Color = Color3.fromRGB(255, 170, 0)
+					})
+				end)
+			end
+
+			task.wait(30)
+		end
+	end)
+
+	return
+end
 
 local State = "idle" -- idle / running / paused / resetting
 local PulseToken = 0
