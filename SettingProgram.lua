@@ -129,6 +129,35 @@ local function Trim(str)
 	return string.match(str, "^%s*(.-)%s*$")
 end
 
+local function GetPlaceCapturePosition()
+	local cam = workspace.CurrentCamera
+	if not cam then
+		return nil
+	end
+
+	local mousePos = UserInputService:GetMouseLocation()
+	local ray = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
+
+	local ignore = {}
+	local preview = cam:FindFirstChild("PlacePreview") -- đổi tên này thành model preview của bạn
+	if preview then
+		table.insert(ignore, preview)
+	end
+
+	local char = LocalPlayer.Character
+	if char then
+		table.insert(ignore, char)
+	end
+
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Blacklist
+	params.FilterDescendantsInstances = ignore
+	params.IgnoreWater = true
+
+	local result = workspace:Raycast(ray.Origin, ray.Direction * 10000, params)
+	return result and result.Position or nil
+end
+
 local function VecToText(v)
 	return ("%s, %s, %s"):format(
 		string.format("%.2f", v.X):gsub("%.?0+$", ""),
@@ -217,14 +246,13 @@ local function SetAddPositionState(on)
 		AddPositionStroke.Enabled = CaptureArmed
 	end
 
-	--// Move PlaceSetting
-	local targetPos = CaptureArmed and PlaceSettingActivePosition or PlaceSettingDefaultPosition
+	local mouse = LocalPlayer:GetMouse()
+	local cam = workspace.CurrentCamera
+	local preview = cam and cam:FindFirstChild("PlacePreview") -- đổi tên này theo model của bạn
+	mouse.TargetFilter = CaptureArmed and preview or nil
 
-	TweenService:Create(
-		PlaceSetting,
-		MoveTweenInfo,
-		{Position = targetPos}
-	):Play()
+	local targetPos = CaptureArmed and PlaceSettingActivePosition or PlaceSettingDefaultPosition
+	TweenService:Create(PlaceSetting, MoveTweenInfo, { Position = targetPos }):Play()
 
 	if CaptureArmed then
 		CaptureReady = false
@@ -521,13 +549,11 @@ local function CaptureWorldPosition()
 		return
 	end
 
-	local mouse = LocalPlayer:GetMouse()
-	local hit = mouse and mouse.Hit
-	if not hit then
+	local pos = GetPlaceCapturePosition()
+	if not pos then
 		return
 	end
 
-	local pos = hit.Position
 	CurrentDraft.positions = CurrentDraft.positions or {}
 	table.insert(CurrentDraft.positions, pos)
 	RefreshPositionList()
