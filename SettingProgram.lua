@@ -138,15 +138,11 @@ local function GetPlaceCapturePosition()
 	local mousePos = UserInputService:GetMouseLocation()
 	local ray = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
 
-	local ignore = {}
-	local preview = cam:FindFirstChild("PlacePreview") -- đổi tên này thành model preview của bạn
-	if preview then
-		table.insert(ignore, preview)
-	end
+	local ignore = { cam }
 
 	local char = LocalPlayer.Character
 	if char then
-		table.insert(ignore, char)
+		ignore[#ignore + 1] = char
 	end
 
 	local params = RaycastParams.new()
