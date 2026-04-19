@@ -425,7 +425,7 @@ UICorner8.Parent = ShadowFrame3
 
 local ManageProgramFrame = Instance.new("Frame")
 ManageProgramFrame.Name = "ManageProgramFrame"
-ManageProgramFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+ManageProgramFrame.Position = UDim2.new(0.18, 0, 0.5, 0)
 ManageProgramFrame.Size = UDim2.new(0, 350, 0, 200)
 ManageProgramFrame.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 ManageProgramFrame.BorderSizePixel = 0
@@ -811,7 +811,7 @@ ShadowFrame5.Parent = LoadOutputProgramButton
 
 local SelectType = Instance.new("ScrollingFrame")
 SelectType.Name = "SelectType"
-SelectType.Position = UDim2.new(0.5, 0, 0.5, 0)
+SelectType.Position = UDim2.new(0.18, 0, 0.5, 0)
 SelectType.Size = UDim2.new(0, 150, 0, 200)
 SelectType.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 SelectType.BorderSizePixel = 0
@@ -909,7 +909,7 @@ Wait.Parent = SelectType
 
 local PlaceSetting = Instance.new("Frame")
 PlaceSetting.Name = "PlaceSetting"
-PlaceSetting.Position = UDim2.new(0.5, 0, 0.5, 0)
+PlaceSetting.Position = UDim2.new(0.18, 0, 0.5, 0)
 PlaceSetting.Size = UDim2.new(0, 350, 0, 200)
 PlaceSetting.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 PlaceSetting.BorderSizePixel = 0
@@ -1100,7 +1100,7 @@ Title3.Parent = PlaceSetting
 
 local UpgradeSetting = Instance.new("Frame")
 UpgradeSetting.Name = "UpgradeSetting"
-UpgradeSetting.Position = UDim2.new(0.5, 0, 0.5, 0)
+UpgradeSetting.Position = UDim2.new(0.18, 0, 0.5, 0)
 UpgradeSetting.Size = UDim2.new(0, 350, 0, 200)
 UpgradeSetting.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 UpgradeSetting.BorderSizePixel = 0
@@ -1390,7 +1390,7 @@ Title4.Parent = UpgradeSetting
 
 local UpgradeAllSetting = Instance.new("Frame")
 UpgradeAllSetting.Name = "UpgradeAllSetting"
-UpgradeAllSetting.Position = UDim2.new(0.5, 0, 0.5, 0)
+UpgradeAllSetting.Position = UDim2.new(0.18, 0, 0.5, 0)
 UpgradeAllSetting.Size = UDim2.new(0, 350, 0, 200)
 UpgradeAllSetting.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 UpgradeAllSetting.BorderSizePixel = 0
@@ -1667,7 +1667,7 @@ Title5.Parent = UpgradeAllSetting
 
 local SellSetting = Instance.new("Frame")
 SellSetting.Name = "SellSetting"
-SellSetting.Position = UDim2.new(0.5, 0, 0.5, 0)
+SellSetting.Position = UDim2.new(0.18, 0, 0.5, 0)
 SellSetting.Size = UDim2.new(0, 350, 0, 200)
 SellSetting.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 SellSetting.BorderSizePixel = 0
@@ -1883,7 +1883,7 @@ Title6.BackgroundTransparency = 1
 Title6.BorderSizePixel = 0
 Title6.BorderColor3 = Color3.new(0, 0, 0)
 Title6.Transparency = 1
-Title6.Text = ' <font color="rgb(255,0,255)">Sell</font> program setting'
+Title6.Text = '<font color="rgb(255,0,255)">Sell</font> program setting'
 Title6.TextColor3 = Color3.new(0.588235, 0, 1)
 Title6.TextSize = 20
 Title6.FontFace = Font.new("rbxassetid://12187371840", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
@@ -1895,7 +1895,7 @@ Title6.Parent = SellSetting
 
 local WaitSetting = Instance.new("Frame")
 WaitSetting.Name = "WaitSetting"
-WaitSetting.Position = UDim2.new(0.5, 0, 0.5, 0)
+WaitSetting.Position = UDim2.new(0.18, 0, 0.5, 0)
 WaitSetting.Size = UDim2.new(0, 350, 0, 200)
 WaitSetting.BackgroundColor3 = Color3.new(0.109804, 0.0745098, 0.133333)
 WaitSetting.BorderSizePixel = 0
@@ -2081,27 +2081,7 @@ OutputSample3.Transparency = 1
 OutputSample3.Text = "[System]: 1m1m1m1m1m1m1m1m1m1m1m"
 OutputSample3.TextColor3 = Color3.new(0.705882, 0.588235, 0.705882)
 OutputSample3.TextSize = 17
-OutputSample3.TextStrokeTransparency = 0.5
 OutputSample3.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 OutputSample3.TextXAlignment = Enum.TextXAlignment.Left
 OutputSample3.Parent = ConsoleOutside
 
-local Frame = TDSHub
-if not Frame then return end
-task.spawn(function()
-	while true do
-		local allOk = true
-		for _, obj in ipairs(Frame:GetDescendants()) do
-			if obj:IsA("TextLabel")
-			or obj:IsA("TextBox")
-			or obj:IsA("TextButton") then
-				if obj.TextTransparency ~= 0 then
-					obj.TextTransparency = 0
-					allOk = false
-				end
-			end
-		end
-		if allOk then break end
-		task.wait(0.1)
-	end
-end)
