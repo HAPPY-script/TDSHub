@@ -23,8 +23,8 @@ local PositionFrame = PlaceSetting:WaitForChild("Position")
 local PositionSample = PositionFrame:WaitForChild("PositionSample")
 local PlaceSaveButton = PlaceSetting:WaitForChild("SaveButton")
 local PlaceCancelButton = PlaceSetting:WaitForChild("CancelButton")
-local PlaceSettingActivePosition = UDim2.new(0.5, 0, 0.83, 0)
-local PlaceSettingDefaultPosition = UDim2.new(0.5, 0, 0.5, 0)
+local PlaceSettingActivePosition = UDim2.new(0.18, 0, 0.835, 0)
+local PlaceSettingDefaultPosition = UDim2.new(0.18, 0, 0.5, 0)
 local MoveTweenInfo = TweenInfo.new(
 	0.25,
 	Enum.EasingStyle.Quad,
