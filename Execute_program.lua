@@ -60,7 +60,7 @@ local Runner = nil
 local Program = {}
 local ProgramError = nil
 
-local MAX_LOG_CHARS = 28
+local MAX_LOG_CHARS = 50
 
 local function Clip(s, n)
 	s = tostring(s or "")
