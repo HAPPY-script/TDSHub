@@ -232,7 +232,7 @@ local function Trim(text)
 end
 
 local function ShowManageFrame()
-	ManageProgramFrame.Position = UDim2.new(0.5,0,0.6,0)
+	ManageProgramFrame.Position = UDim2.new(0.18,0,0.6,0)
 	ManageProgramFrame.Visible = true
 
 	local tween = TweenService:Create(
@@ -242,7 +242,7 @@ local function ShowManageFrame()
 			Enum.EasingStyle.Quad,
 			Enum.EasingDirection.Out
 		),
-		{Position = UDim2.new(0.5,0,0.5,0)}
+		{Position = UDim2.new(0.18,0,0.5,0)}
 	)
 
 	tween:Play()
