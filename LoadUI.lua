@@ -2085,3 +2085,22 @@ OutputSample3.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"
 OutputSample3.TextXAlignment = Enum.TextXAlignment.Left
 OutputSample3.Parent = ConsoleOutside
 
+local Frame = TDSHub
+if not Frame then return end
+task.spawn(function()
+	while true do
+		local allOk = true
+		for _, obj in ipairs(Frame:GetDescendants()) do
+			if obj:IsA("TextLabel")
+			or obj:IsA("TextBox")
+			or obj:IsA("TextButton") then
+				if obj.TextTransparency ~= 0 then
+					obj.TextTransparency = 0
+					allOk = false
+				end
+			end
+		end
+		if allOk then break end
+		task.wait(0.1)
+	end
+end)
