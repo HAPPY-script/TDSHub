@@ -64,6 +64,15 @@ local STEP_DEFAULTS = {
 }
 
 -- AUTO SET TOWER NAME ------------------------------------------------------------------------
+
+local function NormalizeProgram(program, list)
+	local out = DeepCopy(program)
+	for _, step in ipairs(out) do
+		NormalizeTowerFields(step, list)
+	end
+	return out
+end
+
 local TowerList = {
 	-- Starter --
 	"Paintballer",
@@ -575,11 +584,13 @@ end
 
 local function CopyProgram()
 	local clean = {}
-    for _, step in ipairs(ProgramSteps) do
-        clean[#clean+1] = StripInternalKeys(step)
-    end
+	for _, step in ipairs(ProgramSteps) do
+		clean[#clean + 1] = StripInternalKeys(step)
+	end
 
-    local text = BuildProgramText(clean)
+	clean = NormalizeProgram(clean, TowerList)
+
+	local text = BuildProgramText(clean)
 	if type(setclipboard) == "function" then
 		setclipboard(text)
 		Console("System", "Copied", Color3.fromRGB(0, 255, 0))
@@ -591,10 +602,10 @@ end
 local function LoadProgram()
 	local program = {}
 	for _, step in ipairs(ProgramSteps) do
-		local clean = StripInternalKeys(step)
-		NormalizeTowerFields(clean, TowerList)
-		program[#program + 1] = clean
+		program[#program + 1] = StripInternalKeys(step)
 	end
+
+	program = NormalizeProgram(program, TowerList)
 
 	if #program == 0 then
 		return
@@ -701,7 +712,7 @@ _G.TDSHubCustomProgramBuilder = {
         return out
     end,
 	GetProgramText = function()
-		return BuildProgramText(ProgramSteps)
+		return BuildProgramText(NormalizeProgram(ProgramSteps, TowerList))
 	end,
 	SetDeleteMode = SetDeleteMode,
 	SetMoveMode = SetMoveMode,
