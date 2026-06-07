@@ -86,6 +86,13 @@ local CaptureReady = false
 local PositionButtons = {}
 
 ----------- AUTO SET TOWER NAME -------------------------------------------------------------------------------------
+local function Trim(str)
+	if not str then
+		return ""
+	end
+	return string.match(str, "^%s*(.-)%s*$")
+end
+
 local TowerList = {
 	"Paintballer",
 	"Scout",
@@ -149,7 +156,7 @@ local function ResolveTowerName(input)
 	end
 
 	local low = raw:lower()
-	local bestContains = nil
+	local partial = nil
 
 	for _, name in ipairs(TowerList) do
 		local nlow = name:lower()
@@ -158,12 +165,12 @@ local function ResolveTowerName(input)
 			return name
 		end
 
-		if not bestContains and nlow:find(low, 1, true) then
-			bestContains = name
+		if not partial and nlow:find(low, 1, true) then
+			partial = name
 		end
 	end
 
-	return bestContains or raw
+	return partial or raw
 end
 
 local function NormalizeTowerFields(step)
