@@ -85,7 +85,7 @@ local CaptureArmed = false
 local CaptureReady = false
 local PositionButtons = {}
 
------------ AUTO SET TOWER NAME -------------------------------------------------------------------------------------
+-- AUTO SET TOWER NAME ---------------------------------------------------------------------
 local function Trim(str)
 	if not str then
 		return ""
@@ -149,28 +149,43 @@ local function ResolveTowerName(input)
 		return raw
 	end
 
+	local low = raw:lower()
+
+	-- 1. exact match
 	for _, name in ipairs(TowerList) do
 		if raw == name then
-			return raw
+			return name
 		end
 	end
 
-	local low = raw:lower()
-	local partial = nil
+	local bestMatch = nil
+	local bestScore = math.huge
 
 	for _, name in ipairs(TowerList) do
 		local nlow = name:lower()
 
+		-- prefix match (ưu tiên cao nhất)
 		if nlow:sub(1, #low) == low then
-			return name
-		end
-
-		if not partial and nlow:find(low, 1, true) then
-			partial = name
+			local score = #nlow - #low
+			if score < bestScore then
+				bestScore = score
+				bestMatch = name
+			end
+		else
+			-- contains match (ưu tiên thấp hơn)
+			local pos = nlow:find(low, 1, true)
+			if pos then
+				local score = pos + (#nlow - #low)
+				if score < bestScore then
+					bestScore = score
+					bestMatch = name
+				end
+			end
 		end
 	end
 
-	return partial or raw
+	-- fallback giữ nguyên input nếu không match
+	return bestMatch or raw
 end
 
 local function NormalizeTowerFields(step)
@@ -188,7 +203,7 @@ local function NormalizeTowerFields(step)
 
 	return step
 end
-----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 
 local function Console(title, text, color)
 	if type(_G.TDSHubConsole) ~= "function" then
@@ -225,13 +240,6 @@ end
 local function ClampNumText(v, default)
 	local n = tonumber(v)
 	return n or default
-end
-
-local function Trim(str)
-	if not str then
-		return ""
-	end
-	return string.match(str, "^%s*(.-)%s*$")
 end
 
 local function GetPlaceCapturePosition()
@@ -458,13 +466,13 @@ local function SyncWaitMode(button, mode)
 end
 
 local function LoadPlaceSetting(data)
-	PlaceTowerField.Text = data.tower or ""
+	PlaceTowerField.Text = ResolveTowerName(data.tower or "")
 	CurrentDraft.positions = DeepCopy(data.positions or {})
 	RefreshPositionList()
 end
 
 local function LoadUpgradeSetting(data)
-	UpgradeTowerField.Text = data.tower or data.tower_name or ""
+	UpgradeTowerField.Text = ResolveTowerName(data.tower or data.tower_name or "")
 	UpgradeLevelTargetField.Text = tostring(data.level_target or 1)
 	UpgradeOrtherField.Text = tostring(data.order or 1)
 	UpgradeIntervalField.Text = tostring(data.interval or 0.3)
@@ -472,7 +480,7 @@ local function LoadUpgradeSetting(data)
 end
 
 local function LoadUpgradeAllSetting(data)
-	UpgradeAllTowerField.Text = data.tower_name or data.tower or ""
+	UpgradeAllTowerField.Text = ResolveTowerName(data.tower_name or data.tower or "")
 	UpgradeAllLevelTargetField.Text = tostring(data.level_target or 1)
 	UpgradeAllIntervalField.Text = tostring(data.interval or 0.3)
 	SyncUpgradeBranch(UpgradeAllBranchButton, data.branch or 1)
@@ -480,7 +488,7 @@ local function LoadUpgradeAllSetting(data)
 end
 
 local function LoadSellSetting(data)
-	SellTowerField.Text = data.tower_name or data.tower or ""
+	SellTowerField.Text = ResolveTowerName(data.tower_name or data.tower or "")
 	SellIntervalField.Text = tostring(data.interval or 0.2)
 	SyncSellOrder(SellOrtherTextbox, data.order)
 end
@@ -550,25 +558,25 @@ local function SaveSetting()
 	end
 
 	if CurrentType == "place" then
-		CurrentDraft.tower = Trim(PlaceTowerField.Text)
+		CurrentDraft.tower = ResolveTowerName(Trim(PlaceTowerField.Text))
 		CurrentDraft.positions = DeepCopy(CurrentDraft.positions or {})
 
 	elseif CurrentType == "upgrade" then
-		CurrentDraft.tower = Trim(UpgradeTowerField.Text)
+		CurrentDraft.tower = ResolveTowerName(Trim(UpgradeTowerField.Text))
 		CurrentDraft.level_target = ClampNumText(UpgradeLevelTargetField.Text, 1)
 		CurrentDraft.order = ClampNumText(UpgradeOrtherField.Text, 1)
 		CurrentDraft.interval = ClampNumText(UpgradeIntervalField.Text, 0.3)
 		CurrentDraft.branch = TextToBranch(UpgradeBranchButton.Text)
 
 	elseif CurrentType == "upgrade_all" then
-		CurrentDraft.tower_name = Trim(UpgradeAllTowerField.Text)
+		CurrentDraft.tower_name = ResolveTowerName(Trim(UpgradeAllTowerField.Text))
 		CurrentDraft.level_target = ClampNumText(UpgradeAllLevelTargetField.Text, 1)
 		CurrentDraft.interval = ClampNumText(UpgradeAllIntervalField.Text, 0.3)
 		CurrentDraft.branch = TextToBranch(UpgradeAllBranchButton.Text)
 		CurrentDraft.one_by_one = OneByOneTextToBool(UpgradeAllOneByOneButton.Text)
 
 	elseif CurrentType == "sell" then
-		CurrentDraft.tower_name = Trim(SellTowerField.Text)
+		CurrentDraft.tower_name = ResolveTowerName(Trim(SellTowerField.Text))
 		CurrentDraft.interval = ClampNumText(SellIntervalField.Text, 0.2)
 		local order = TextToOrder(SellOrtherTextbox.Text)
 		if order == nil then
@@ -606,6 +614,7 @@ local function OpenSetting(programKey)
 	CurrentStep = step
 	CurrentType = step.type
 	CurrentDraft = DeepCopy(step)
+	NormalizeTowerFields(CurrentDraft)
 
 	if type(_G.TDSHubRunning) == "boolean" and _G.TDSHubRunning then
 		return false, "Running"
@@ -711,6 +720,32 @@ UpgradeCancelButton.MouseButton1Click:Connect(CloseSetting)
 UpgradeAllCancelButton.MouseButton1Click:Connect(CloseSetting)
 SellCancelButton.MouseButton1Click:Connect(CloseSetting)
 WaitCancelButton.MouseButton1Click:Connect(CloseSetting)
+
+_G.TDSHubCustomProgramBuilder = {
+	AddStep = AddStep,
+	DeleteMode = function()
+		return DeleteMode
+	end,
+	MoveMode = function()
+		return MoveMode
+	end,
+	GetProgram = function()
+		local out = {}
+		for _, step in ipairs(ProgramSteps) do
+			out[#out + 1] = StripInternalKeys(step)
+		end
+		return out
+	end,
+	GetProgramRef = function()
+		return ProgramSteps
+	end,
+	GetProgramText = function()
+		return BuildProgramText(ProgramSteps)
+	end,
+	SetDeleteMode = SetDeleteMode,
+	SetMoveMode = SetMoveMode,
+	Rebuild = RebuildProgramUI,
+}
 
 _G.TDSHubOpenSetting = OpenSetting
 _G.TDSHubSettingOpen = OpenSetting
