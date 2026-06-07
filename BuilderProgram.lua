@@ -63,124 +63,6 @@ local STEP_DEFAULTS = {
 	wait = { type = "wait", mode = "sec", value = 0 },
 }
 
--- AUTO SET TOWER NAME ------------------------------------------------------------------------
-
-local function NormalizeProgram(program, list)
-	local out = DeepCopy(program)
-	for _, step in ipairs(out) do
-		NormalizeTowerFields(step, list)
-	end
-	return out
-end
-
-local TowerList = {
-	-- Starter --
-	"Paintballer",
-	"Scout",
-	"Soldier",
-	"Sniper",
-	"Slime Trooper",
-	"Demoman",
-	
-	-- Intermediate
-	"Assassin",
-	"Fram",
-	"Medic",
-	"Military Base",
-	"Freezer",
-	"Ace Pilot",
-	"Trapper",
-	"Militant",
-	"Electroshocker",
-	"Pyromancer",
-	"Shotgunner",
-	"Crook Boss",
-	"Hunter",
-	"Rocketeer",
-
-	-- Advanced --
-	"Cowboy",
-	"Saboteur",
-	"Commander",
-	"Warden",
-	"DJ Booth",
-	"Mortar",
-	"Minigunner",
-	"Tesla",
-	"Mercenary Base",
-	"Ranger",
-	"Pursuit",
-	"Gatling Gun",
-	"Turret",
-
-	-- Hardcore --
-	"Brawler",
-	"Engineer",
-	"Hacker",
-	"Necromancer",
-	"Accelerator",
-	"Juggemaut",
-
-	-- Exclusive --
-	"Biologist",
-	"Firework Technician",
-	"Spotlight Tech",
-	"Warlock",
-}
-
-local function ResolveTowerName(input, list)
-	if type(input) ~= "string" then
-		return input
-	end
-
-	-- 1) Nếu nhập đúng 100% theo list thì giữ nguyên luôn
-	for _, name in ipairs(list) do
-		if input == name then
-			return input
-		end
-	end
-
-	local low = input:lower()
-	local partial = nil
-
-	-- 2) Không phân biệt hoa thường, ưu tiên:
-	--    a) khớp prefix
-	--    b) khớp chứa chuỗi
-	for _, name in ipairs(list) do
-		local nlow = name:lower()
-
-		if nlow:sub(1, #low) == low then
-			return name
-		end
-
-		if not partial and nlow:find(low, 1, true) then
-			partial = name
-		end
-	end
-
-	-- 3) Nếu không có gì phù hợp thì giữ nguyên giá trị đã ghi
-	return partial or input
-end
-
-local function NormalizeTowerFields(step, list)
-	if type(step) ~= "table" then
-		return step
-	end
-
-	local out = step
-
-	if out.tower ~= nil then
-		out.tower = ResolveTowerName(out.tower, list)
-	end
-
-	if out.tower_name ~= nil then
-		out.tower_name = ResolveTowerName(out.tower_name, list)
-	end
-
-	return out
-end
-------------------------------------------------------------------------------------------------------
-
 local ProgramSteps = {}
 _G.TDSHubProgramSteps = ProgramSteps
 local DeleteMode = false
@@ -584,13 +466,11 @@ end
 
 local function CopyProgram()
 	local clean = {}
-	for _, step in ipairs(ProgramSteps) do
-		clean[#clean + 1] = StripInternalKeys(step)
-	end
+    for _, step in ipairs(ProgramSteps) do
+        clean[#clean+1] = StripInternalKeys(step)
+    end
 
-	clean = NormalizeProgram(clean, TowerList)
-
-	local text = BuildProgramText(clean)
+    local text = BuildProgramText(clean)
 	if type(setclipboard) == "function" then
 		setclipboard(text)
 		Console("System", "Copied", Color3.fromRGB(0, 255, 0))
@@ -604,8 +484,6 @@ local function LoadProgram()
 	for _, step in ipairs(ProgramSteps) do
 		program[#program + 1] = StripInternalKeys(step)
 	end
-
-	program = NormalizeProgram(program, TowerList)
 
 	if #program == 0 then
 		return
@@ -624,8 +502,9 @@ local function LoadProgram()
 	end
 
 	Console("System", "Loaded", Color3.fromRGB(0, 255, 0))
-	ManageProgramFrame.Visible = false
-	Executor.Visible = true
+    
+    ManageProgramFrame.Visible = false
+    Executor.Visible = true
 end
 
 local function AddStep(stepType)
@@ -712,7 +591,7 @@ _G.TDSHubCustomProgramBuilder = {
         return out
     end,
 	GetProgramText = function()
-		return BuildProgramText(NormalizeProgram(ProgramSteps, TowerList))
+		return BuildProgramText(ProgramSteps)
 	end,
 	SetDeleteMode = SetDeleteMode,
 	SetMoveMode = SetMoveMode,
