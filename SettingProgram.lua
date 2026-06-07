@@ -85,6 +85,104 @@ local CaptureArmed = false
 local CaptureReady = false
 local PositionButtons = {}
 
+----------- AUTO SET TOWER NAME -------------------------------------------------------------------------------------
+local TowerList = {
+	"Paintballer",
+	"Scout",
+	"Soldier",
+	"Sniper",
+	"Slime Trooper",
+	"Demoman",
+	"Assassin",
+	"Fram",
+	"Medic",
+	"Military Base",
+	"Freezer",
+	"Ace Pilot",
+	"Trapper",
+	"Militant",
+	"Electroshocker",
+	"Pyromancer",
+	"Shotgunner",
+	"Crook Boss",
+	"Hunter",
+	"Rocketeer",
+	"Cowboy",
+	"Saboteur",
+	"Commander",
+	"Warden",
+	"DJ Booth",
+	"Mortar",
+	"Minigunner",
+	"Tesla",
+	"Mercenary Base",
+	"Ranger",
+	"Pursuit",
+	"Gatling Gun",
+	"Turret",
+	"Brawler",
+	"Engineer",
+	"Hacker",
+	"Necromancer",
+	"Accelerator",
+	"Juggemaut",
+	"Biologist",
+	"Firework Technician",
+	"Spotlight Tech",
+	"Warlock",
+}
+
+local function ResolveTowerName(input)
+	if type(input) ~= "string" then
+		return input
+	end
+
+	local raw = Trim(input)
+	if raw == "" then
+		return raw
+	end
+
+	for _, name in ipairs(TowerList) do
+		if raw == name then
+			return raw
+		end
+	end
+
+	local low = raw:lower()
+	local bestContains = nil
+
+	for _, name in ipairs(TowerList) do
+		local nlow = name:lower()
+
+		if nlow:sub(1, #low) == low then
+			return name
+		end
+
+		if not bestContains and nlow:find(low, 1, true) then
+			bestContains = name
+		end
+	end
+
+	return bestContains or raw
+end
+
+local function NormalizeTowerFields(step)
+	if type(step) ~= "table" then
+		return step
+	end
+
+	if step.tower ~= nil then
+		step.tower = ResolveTowerName(step.tower)
+	end
+
+	if step.tower_name ~= nil then
+		step.tower_name = ResolveTowerName(step.tower_name)
+	end
+
+	return step
+end
+----------------------------------------------------------------------------------------------------------
+
 local function Console(title, text, color)
 	if type(_G.TDSHubConsole) ~= "function" then
 		return
@@ -407,19 +505,22 @@ local function CommitToProgram()
 		return false
 	end
 
+	local draft = DeepCopy(CurrentDraft)
+	NormalizeTowerFields(draft)
+
 	for k in pairs(target) do
 		if k ~= "id" then
 			target[k] = nil
 		end
 	end
 
-	for k, v in pairs(CurrentDraft) do
+	for k, v in pairs(draft) do
 		if k ~= "id" and k ~= "_order_nil" then
 			target[k] = DeepCopy(v)
 		end
 	end
 
-	if CurrentDraft._order_nil then
+	if draft._order_nil then
 		target.order = nil
 	end
 
