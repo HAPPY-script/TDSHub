@@ -5,7 +5,7 @@ if type(notify) == "function" then
 		title = "TDS Script",
 		text = "The remote control system is currently under maintenance.",
 		color = {255,255,0},
-		time = 5
+		time = 15
 	})
 else
 	pcall(game.GetService(game, "StarterGui").SetCore,
@@ -14,7 +14,7 @@ else
 		{
 			Title = "TDS Script",
 			Text = "The remote control system is currently under maintenance.",
-			Duration = 5
+			Duration = 15
 		}
 	)
 end
