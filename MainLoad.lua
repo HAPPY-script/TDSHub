@@ -1,3 +1,25 @@
+local notify = _G.HAPPYnotification
+
+if type(notify) == "function" then
+	notify({
+		title = "TDS Script",
+		text = "The remote control system is currently under maintenance.",
+		color = {255,255,0},
+		time = 5
+	})
+else
+	pcall(game.GetService(game, "StarterGui").SetCore,
+		game:GetService("StarterGui"),
+		"SendNotification",
+		{
+			Title = "TDS Script",
+			Text = "The remote control system is currently under maintenance.",
+			Duration = 5
+		}
+	)
+end
+return
+----------------------------------------------------------------------
 if _G.TDSHub then
     warn("Script đã chạy! Không thể chạy lại.")
     return
